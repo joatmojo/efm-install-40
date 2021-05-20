@@ -1,0 +1,92 @@
+---
+- name: Setting repo and Install efm software
+  hosts: nodeall
+  become: true
+
+  vars:
+    proxy_env:
+      http_proxy: "{{ http_proxy }}"
+      https_proxy: "{{ https_proxy }}"
+
+  tasks:
+    - name: install repo latest via yum
+      yum:
+        name: https://yum.enterprisedb.com/edbrepos/edb-repo-latest.noarch.rpm
+        state: present
+      environment: "{{ proxy_env }}"
+
+    - name: sed registered user on enterprisedb repo
+      command: sed -i "s@<username>:<password>@joatmojo:cCjuDRHwokQJDU7Z@" /etc/yum.repos.d/edb.repo
+
+    - name: install epel release latest via yum
+      yum:
+        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        state: present
+      environment: "{{ proxy_env }}"   
+
+    - name: install efm 4.0 via yum
+      yum:
+        name: edb-efm40
+        state: present
+      environment: "{{ proxy_env }}"
+
+- name: Copy configuration node1
+  hosts: pgnode1
+  become: true
+
+  tasks:
+    - name: copy efm.properties for node1
+      copy:
+        src: ./files/efm.properties.node1
+        dest: /etc/edb/efm-4.0/efm.properties
+        owner: efm
+        group: efm
+        mode: 0644  
+
+    - name: copy efm.node for node1
+      copy:
+        src: ./files/efm.nodes-1
+        dest: /etc/edb/efm-4.0/efm.nodes
+        owner: efm
+        group: efm
+        mode: 0644
+
+- name: Copy configuration node2
+  hosts: pgnode2
+  become: true
+
+  tasks:
+    - name: copy efm.properties for node2
+      copy: 
+        src: ./files/efm.properties.node2
+        dest: /etc/edb/efm-4.0/efm.properties
+        owner: efm
+        group: efm
+        mode: 0644  
+
+    - name: copy efm.node for node2
+      copy: 
+        src: ./files/efm.nodes-2
+        dest: /etc/edb/efm-4.0/efm.nodes
+        owner: efm
+        group: efm
+        mode: 0644
+
+- name: Restart efm service and check efm cluster status
+  hosts: nodeall
+  become: true
+  
+  tasks:
+    - name: restart efm service
+      service:
+        name: edb-efm-4.0
+        state: restarted
+
+    - name: cek efm cluster-status after
+      command: /usr/edb/efm-4.0/bin/efm cluster-status efm
+      register: cluster
+
+    - debug: var=cluster.stdout_lines        
+
+
+

@@ -1,0 +1,13 @@
+[all:vars]
+http_proxy=http://192.168.131.254:3128
+https_proxy=http://192.168.131.254:3128
+
+[nodeall]
+ppaslab1
+ppaslab2
+
+[pgnode1]
+ppaslab1
+
+[pgnode2]
+ppaslab2

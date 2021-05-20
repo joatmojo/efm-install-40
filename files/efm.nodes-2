@@ -1,0 +1,5 @@
+# List of node address:port combinations separated by whitespace.
+# The list should include at least the membership coordinator's address.
+
+192.168.131.201:7800
+#192.168.133.2:7800
