@@ -37,7 +37,7 @@ db.service.name=ppas-9.3
 # /usr/edb/as11/bin. Unless the db.service.name property is used, the pg_ctl
 # command is used to start/stop/restart databases as needed after a
 # failover or switchover. This property is required.
-db.bin=/opt/PostgresPlus/9.3AS/bin
+db.bin=/data/PostgresPlus/9.3AS/bin
 
 # For database version 12 and up, this is the directory where a standby.signal
 # file will exist for a standby node. For previous versions, this is the
